@@ -16,6 +16,7 @@ import logging
 import os
 import sys
 import openpyxl
+import random
 
 #name_pattern = os.environ.get('name_pattern')
 class createLRP ():
@@ -34,8 +35,8 @@ class createLRP ():
         
     def dataprocess(self,data_input_file):
         #input data file location
-        phi_loc='/Users/waquarkaleem/NEOS-LRP-Codes/pre_trained_model/model_phi.onnx'
-        rho_loc='/Users/waquarkaleem/NEOS-LRP-Codes/pre_trained_model/model_rho.onnx'
+        phi_loc='/Users/waquarkaleem/NEOS-LRP-Codes-2/pre_trained_model/model_phi.onnx'
+        rho_loc='/Users/waquarkaleem/NEOS-LRP-Codes-2/pre_trained_model/model_rho.onnx'
         logging.info(f"The phi file name:{phi_loc}\n")
         logging.info(f"The rho file name:{rho_loc}\n")
         # #preparing for log file
@@ -160,6 +161,7 @@ class createLRP ():
             rho_output=extract_onnx(z_start[j],rho_net)
             route_cost_start[j]=rho_output[0].item()
             num_route_start[j]=rho_output[1].item()
+            print(f"Rho output for depot {j}: {rho_output}")
 
         print("Initial Route cost",route_cost_start)
         logging.info(f"Initial individual Route cost {route_cost_start}")
@@ -205,6 +207,8 @@ class createLRP ():
 
         #LRP Model
         
+        random_costs = {j: random.uniform(0.0, 25.326530612244763) for j in range(self.depotno)}
+        random_num_routes = {j: random.randint(1, 19) for j in range(self.depotno)}
 
         m = gp.Model('facility_location')
 
@@ -272,9 +276,13 @@ class createLRP ():
             route_per_depot[j]=[route_cost[j],num_routes[j]]  
 
 
+        # for j in range(self.depotno):
+        #     t_const=gt.add_sequential_constr(m, sequential_model,z_values_per_depot[j],route_per_depot[j])
+        #     t_const.print_stats()
+            
         for j in range(self.depotno):
-            t_const=gt.add_sequential_constr(m, sequential_model,z_values_per_depot[j],route_per_depot[j])
-            t_const.print_stats()
+            route_per_depot[j] = [random_costs[j], random_num_routes[j]]
+
 
         # Indicator Constraint to stop cost calculation for closed depot
         for j in range(self.depotno):
@@ -303,6 +311,15 @@ class createLRP ():
         Ed_time=datetime.now()
         print("Objective value is ", end='')
         print(m.objVal,'\n')
+
+        for j in range(self.depotno):
+            if y[j].X > 0.5:  
+                optimized_route_cost = route_cost[j].X
+                optimized_num_routes = num_routes[j].X
+                print(f"Optimized route cost for depot {j}: {optimized_route_cost}")
+                print(f"Optimized number of routes for depot {j}: {optimized_num_routes}")
+                logging.info(f"Optimized route cost for depot {j}: {optimized_route_cost}")
+                logging.info(f"Optimized number of routes for depot {j}: {optimized_num_routes}")
 
         lrp_obj=m.objVal
         logging.info(f"Objective value is {lrp_obj}")
@@ -350,7 +367,7 @@ class createLRP ():
 
 
         #print(m.display())
-        logging.info(m.display())
+        # logging.info(m.display())
 
         #self.writeexcel(file,f_obj,r_obj,lrp_obj,etpd)
 

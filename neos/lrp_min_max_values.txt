@@ -1,0 +1,4 @@
+Min normalized cost: 0.0
+Max normalized cost: 25.326530612244763
+Min Routes: 1
+Max Routes: 19
