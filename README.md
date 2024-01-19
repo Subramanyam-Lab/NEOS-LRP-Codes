@@ -14,6 +14,4 @@ In the random_learning_prediction branch of this repository, we have introduced 
 
 #### Running the Code in This Branch:
 - The steps to run the code in this branch are similar to those in the main branch, with the key difference being the way route costs and the number of routes are handled.
-- Users should be aware of these changes and consider their implications when interpreting the results.
-The repository is structured as follows: 
 -------------------------------------------------
