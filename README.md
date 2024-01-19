@@ -10,7 +10,7 @@ In the random_learning_prediction branch of this repository, we have introduced 
   
 #### Adaptations in the Code:
 - In the `lrp_easy` script, the section where the `rho` neural network was previously used has been modified to incorporate the random value generation.
-- The random values are used as constraints in the Gurobi optimization model. 
+- See the lines 278 - 285 in `lrp_easy` script
 
 #### Running the Code in This Branch:
 - The steps to run the code in this branch are similar to those in the main branch, with the key difference being the way route costs and the number of routes are handled.
