@@ -82,7 +82,7 @@ Before discussing steps to run the code ensure you have Gurobi with a valid lice
 
    - Determine the version to run: For using the NEOS model with rho neural network predictions, ensure the script begins with `from lrp_easy import createLRP`. If your intention is to test the random generator, the first line should be `from lrp_easy_random import createLRP`
 
-   - Execute the `neos_vrpeasy.py` script located in `NEOS-LRP-Codes/neos`. This runs the neural embedded frameworks, and the results will be stored in `results/neos_results.xlsx`.s
+   - Execute the `neos_vrpeasy.py` script located in `NEOS-LRP-Codes/neos`. This runs the neural embedded frameworks, and the results will be stored in `results/neos_results.xlsx`or `rresults/neos_with_random_gen.xlsx` based on the version of run.
 
 
 8. **Run the `flp_execute` Script:**
