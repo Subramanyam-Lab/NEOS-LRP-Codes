@@ -11,9 +11,9 @@ Contains scripts for computing LRP costs using neural embedded framework, with r
    - `dataparse`: Converts `.dat` files (prodhon dataset) into a usable format
    - `network`: Transforms pretrained neural network (in ONNX file format) into PyTorch models, invoking `lrp_easy.py` and `solver_cvrp.py`.
    - `lrp_easy`: The lrp_easy.py contains the LRP (Location Routing Problem) model developed using the Gurobi interface. It includes the trained neural network component for predicting the routing cost, which guides the customer assignment decisions. The customer assignments generated are then passed through solver_cvrp.py.This file has all necessary libraries for executing the scripts. Users should install these libraries, step by step how to run the code is describe in subsequent sections.
-
-   - `lrp_easy_random`: The lrp_easy_random.py is same as lrp_easy.py except that in lrp_easy_random.py `rho` neural network is replaced by an random generator that produces output in the same order of magnitude for both cost and the number of routes. 
-
+   - `lrp_easy_random.py` modifies the original `lrp_easy.py` by replacing the `rho` neural network with a random generator for route cost and number of routes calculations. Changes include:
+      - **Route Cost Calculation**: Costs are randomly generated within a 0.0 to 25.3265 range, based on normalized values from training data.
+      - **Number of Routes Estimation**: The number of routes per depot is randomly selected between 1 and 19 again based on values from training data.
    - `solver_cvrp`: calls VRPSolverEasy (exact branch price and cut VRP solver) for exact route cost calculation based on customer assignments.
 
 ### 3) `pre_trained_model` 
@@ -94,11 +94,4 @@ After successful running the code you can see the two Excel files with results. 
    - `neos_results`: Contains columns for various cost metrics, execution times, and model performance data. The data columns are: File name, FLP cost, NN predicted VRP cost, NN predicted LRP cost, avg lrp_easy script execution time per depot, initial solution generation time, NN model execution time, VRPSolverEasy computed VRP cost, actual LRP cost(using VRPSolverEasy), avg solver_cvrp script execution time per depot, total solver_cvrp script execution time, VRPSolverEasy model solve time.
    - `flp_results`: Presents data related to OR-Tools performance, including costs, solve times, and execution metrics. The data columns are: File name, OR-Tools FLP cost, OR-Tools predicted VRP cost, OR-Tools predicted LRP cost, FLP model solve time, OR-Tools execution total time, OR-Tools avg execution time per depot, VRP cost (VRPSolverEasy), LRP cost (VRPSolverEasy), total solver_cvrp script execution time, avg solver_cvrp script execution time."
 
-### Additional:
 
-### Random Route Costs and Number of Routes in branch random_learning_prediction
- we have introduced a  change to the way route costs and the number of routes are determined in the NEOS LRP model. Instead of using the `rho` neural network to predict these values, we are now generating them randomly within predefined ranges.
-
-### Changes:
-- **Route Cost Calculation**: Route costs for each depot are now randomly generated within the range of 0.0 to 25.3265 (this range is obtained from training data and is the normalized cost).
-- **Number of Routes Estimation**: The number of routes for each depot is randomly chosen between 1 and 19, instead of being predicted by the `rho` neural network.(this range is obtained from training data).
