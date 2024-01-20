@@ -1,5 +1,4 @@
-
-from lrp_easy import createLRP
+from lrp_easy_random import createLRP
 from solver_cvrp import dataCvrp
 import os
 import openpyxl

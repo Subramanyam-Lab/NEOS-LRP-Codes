@@ -126,9 +126,7 @@ class createLRP ():
         phi_outputs={}
         for j in y_open:
             phi_outputs[j]=extract_onnx(fac_dict_initial[j].values,phi_net)
-        
-        
-        
+         
         print(phi_outputs[y_open[0]].size())
         sz=phi_outputs[y_open[0]].size()
         ls=sz[1]
@@ -152,8 +150,6 @@ class createLRP ():
                     for i in flp_assignment[1][j]:
                         if x_start[j][i]==1:
                             z_start[j][l]+= (x_start[j][i])* (ws_phi_outputs[j][i][l])
-                
-
                 
 
         # initial routes cost and number
@@ -208,6 +204,10 @@ class createLRP ():
 
 
         #LRP Model
+        
+        random_costs = {j: random.uniform(0.0, 25.326530612244763) for j in range(self.depotno)}
+        random_num_routes = {j: random.randint(1, 19) for j in range(self.depotno)}
+
         m = gp.Model('facility_location')
 
         # Decision variables
@@ -255,28 +255,18 @@ class createLRP ():
         St_time=datetime.now()
         print("Start time for MIP part:",St_time)
 
-        #Neural Network Constraints
-        onnx_model = onnx.load(rho_loc)
-        pytorch_rho_mdl = convert(onnx_model).double()
-        layers = []
-        # Get layers of the GraphModule
-        for name, layer in pytorch_rho_mdl.named_children():
-            layers.append(layer)
-        sequential_model = nn.Sequential(*layers)
-
-        z_values_per_depot = {}
         route_per_depot={}
 
-        # Extract the values of z for each depot and store them in the dictionary
         for j in range(self.depotno):
-            
-            z_values_per_depot[j] = [z[j, l] for l in range(latent_space)]
             route_per_depot[j]=[route_cost[j],num_routes[j]]  
 
-
+        # for j in range(self.depotno):
+        #     t_const=gt.add_sequential_constr(m, sequential_model,z_values_per_depot[j],route_per_depot[j])
+        #     t_const.print_stats()
+            
         for j in range(self.depotno):
-            t_const=gt.add_sequential_constr(m, sequential_model,z_values_per_depot[j],route_per_depot[j])
-            t_const.print_stats()
+            route_per_depot[j] = [random_costs[j], random_num_routes[j]]
+
 
         # Indicator Constraint to stop cost calculation for closed depot
         for j in range(self.depotno):
