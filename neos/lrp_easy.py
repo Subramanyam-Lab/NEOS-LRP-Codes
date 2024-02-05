@@ -269,7 +269,8 @@ class createLRP ():
         for j in range(self.depotno):
             
             z_values_per_depot[j] = [z[j, l] for l in range(latent_space)]
-            route_per_depot[j]=[route_cost[j],num_routes[j]]  
+            # route_per_depot[j]=[route_cost[j],num_routes[j]]
+            route_per_depot[j] = [route_cost[j]]   
 
 
         for j in range(self.depotno):
@@ -280,15 +281,19 @@ class createLRP ():
         for j in range(self.depotno):
             m.addConstr((y[j]==0)>>(u[j]==0))
             m.addConstr((y[j]==1)>>(u[j]==route_per_depot[j][0]))
-            m.addConstr((y[j]==0)>>(v[j]==0))
-            m.addConstr((y[j]==1)>>(v[j]==route_per_depot[j][1]))
+            # m.addConstr((y[j]==0)>>(v[j]==0))
+            # m.addConstr((y[j]==1)>>(v[j]==route_per_depot[j][1]))
             
         #Objective
         facility_obj = gp.quicksum(self.facilitycost[j] * y[j] for j in range(self.depotno))
         if self.rc_cal_index==0:
-            route_obj = gp.quicksum((rc_norm[j]*u[j]*100 + self.init_route_cost * v[j])  for j in range(self.depotno))
+            # route_obj = gp.quicksum((rc_norm[j]*u[j]*100 + self.init_route_cost * v[j])  for j in range(self.depotno))
+            route_obj = gp.quicksum((rc_norm[j] * u[j]) * 100  for j in range(self.depotno))
+
         else:
-            route_obj = gp.quicksum((rc_norm[j]*u[j] + self.init_route_cost * v[j])  for j in range(self.depotno))
+            # route_obj = gp.quicksum((rc_norm[j]*u[j] + self.init_route_cost * v[j])  for j in range(self.depotno))
+            route_obj = gp.quicksum((rc_norm[j] * u[j]) * 100  for j in range(self.depotno))
+
 
         m.setObjective(facility_obj + route_obj, GRB.MINIMIZE)
 
