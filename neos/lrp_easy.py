@@ -34,8 +34,8 @@ class createLRP ():
         
     def dataprocess(self,data_input_file):
         #input data file location
-        phi_loc='/Users/waquarkaleem/NEOS-LRP-Codes/pre_trained_model/model_phi.onnx'
-        rho_loc='/Users/waquarkaleem/NEOS-LRP-Codes/pre_trained_model/model_rho.onnx'
+        phi_loc='/Users/waquarkaleem/NEOS-LRP-Codes-2/pre_trained_model/model_phi_singleoutputnn.onnx'
+        rho_loc='/Users/waquarkaleem/NEOS-LRP-Codes-2/pre_trained_model/model_rho_singleoutputnn.onnx'
         logging.info(f"The phi file name:{phi_loc}\n")
         logging.info(f"The rho file name:{rho_loc}\n")
         # #preparing for log file
@@ -155,33 +155,38 @@ class createLRP ():
 
         # initial routes cost and number
         route_cost_start=[0]*self.depotno
-        num_route_start=[0]*self.depotno
+        # num_route_start=[0]*self.depotno
+        
         for j in y_open:
             rho_output=extract_onnx(z_start[j],rho_net)
             route_cost_start[j]=rho_output[0].item()
-            num_route_start[j]=rho_output[1].item()
+            # num_route_start[j]=rho_output[1].item()
 
         print("Initial Route cost",route_cost_start)
         logging.info(f"Initial individual Route cost {route_cost_start}")
-        print("Initial Number of Routes",num_route_start)
-        logging.info(f"Initial Number of routes {num_route_start}")
+        # print("Initial Number of Routes",num_route_start)
+        # logging.info(f"Initial Number of routes {num_route_start}")
         logging.info(f"Normalization factor for route cost {rc_norm_factor}")
         initial_flp_cost= sum(self.facilitycost[j]*y_start[j] for j in range(self.depotno))
         logging.info(f"Initial Facility Objective value is {initial_flp_cost}")
         if self.rc_cal_index==0:
             initial_vrp_cost_variable=sum(rc_norm_factor[j][0]*route_cost_start[j]*100  for j in y_open)
         else:
-            initial_vrp_cost_variable=sum(rc_norm_factor[j][0]*route_cost_start[j] for j in y_open)
-        initial_vrp_cost_fixed=sum(num_route_start[j]*init_route_cost for j in y_open)
-        print("Fixed cost {} and Variable cost {}".format(initial_vrp_cost_fixed,initial_vrp_cost_variable))
+            initial_vrp_cost_variable=sum(rc_norm_factor[j][0]*route_cost_start[j]*100 for j in y_open)
         
-        initial_vrp_cost=initial_vrp_cost_variable+initial_vrp_cost_fixed
+        # initial_vrp_cost_fixed=sum(num_route_start[j]*init_route_cost for j in y_open)
+       
+        # print("Fixed cost {} and Variable cost {}".format(initial_vrp_cost_fixed,initial_vrp_cost_variable))
+        
+        # initial_vrp_cost=initial_vrp_cost_variable+initial_vrp_cost_fixed
+        initial_vrp_cost=initial_vrp_cost_variable
+
         logging.info(f"Initial VRP Objective value is {initial_vrp_cost}")
         initial_obj= initial_flp_cost+initial_vrp_cost
         logging.info(f"Initial Total Objective value is {initial_obj}")
         ws_dt_ed=datetime.now()
         ws_exec=(ws_dt_ed-ws_dt_st).total_seconds()
-        return initial_obj,x_start,y_start,route_cost_start,num_route_start,z_start,ws_exec
+        return initial_obj,x_start,y_start,route_cost_start,z_start,ws_exec
 
 
     def model(self,loc,log_filename):
@@ -189,7 +194,7 @@ class createLRP ():
         facility_dict,big_m,rc_norm, initial_flp_assignment,phi_loc,rho_loc=self.dataprocess(loc)
 
         #initial Feasible Solution for gurobi model
-        initial_objective_value,xst,yst,routecost_st,numroute_st,z_st,ws_time=self.warmstart(initial_flp_assignment,self.init_route_cost,self.customer_cord,self.customer_demand,self.rc_cal_index,phi_loc,rho_loc)
+        initial_objective_value,xst,yst,routecost_st,z_st,ws_time=self.warmstart(initial_flp_assignment,self.init_route_cost,self.customer_cord,self.customer_demand,self.rc_cal_index,phi_loc,rho_loc)
         print("Initial Feasible solution:",initial_objective_value)
         
 
@@ -232,8 +237,8 @@ class createLRP ():
 
         num_routes=m.addVars(self.depotno,vtype=GRB.CONTINUOUS, lb=0,name='Number of routes')
 
-        for j in range(self.depotno):
-            num_routes[j].Start = numroute_st[j]
+        # for j in range(self.depotno):
+        #     num_routes[j].Start = numroute_st[j]
             
         u=m.addVars(self.depotno,vtype=GRB.CONTINUOUS,lb=0, name= "dummy route cost")
 
