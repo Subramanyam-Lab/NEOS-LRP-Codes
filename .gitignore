@@ -2,7 +2,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
-
+neos/dil_instances/
 # C extensions
 *.so
 
