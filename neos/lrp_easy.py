@@ -34,8 +34,8 @@ class createLRP ():
         
     def dataprocess(self,data_input_file):
         #input data file location
-        phi_loc='/Users/waquarkaleem/NEOS-LRP-Codes-2/pre_trained_model/model_phi_singleoutputnn_10000.onnx'
-        rho_loc='/Users/waquarkaleem/NEOS-LRP-Codes-2/pre_trained_model/model_rho_singleoutputnn_10000.onnx'
+        phi_loc='/Users/waquarkaleem/NEOS-LRP-Codes-2/pre_trained_model/DFL/iter_1_systematic_bs1_50frompool/model_phi.onnx'
+        rho_loc='/Users/waquarkaleem/NEOS-LRP-Codes-2/pre_trained_model/DFL/iter_1_systematic_bs1_50frompool/model_rho.onnx'
         logging.info(f"The phi file name:{phi_loc}\n")
         logging.info(f"The rho file name:{rho_loc}\n")
         # #preparing for log file

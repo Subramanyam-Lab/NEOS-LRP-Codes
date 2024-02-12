@@ -7,9 +7,9 @@ from datetime import datetime
 import logging
 import sys
 
-# name_pattern = os.environ.get('name_pattern')
 log_dir = "log_files/mip_nn"
 os.makedirs(log_dir, exist_ok=True)
+
 # Directory containing the prodhon dataset
 directory_path = "/Users/waquarkaleem/NEOS-LRP-Codes-2/prodhon_dataset"
 
@@ -17,9 +17,13 @@ directory_path = "/Users/waquarkaleem/NEOS-LRP-Codes-2/prodhon_dataset"
 DIL_instances = "/Users/waquarkaleem/NEOS-LRP-Codes-2/neos/dil_instances"
 
 # Write the results in the excel
-existing_excel_file="/Users/waquarkaleem/NEOS-LRP-Codes-2/results/neos_results.xlsx" 
+existing_excel_file="/Users/waquarkaleem/NEOS-LRP-Codes-2/results/DFL_LRP.xlsx" 
 workbook = openpyxl.load_workbook(existing_excel_file)
+sheet_name = "iter_1_systematic_bs1_50frompool"
 
+if sheet_name not in workbook.sheetnames:
+    workbook.create_sheet(sheet_name)
+worksheet = workbook[sheet_name]
 
 def write_to_txt_cvrplib_format(depot_id, depot_customers, depot_coords, customer_demands, filename, vehicle_capacity):
     with open(filename, 'w') as file:
@@ -46,8 +50,6 @@ def write_to_txt_cvrplib_format(depot_id, depot_customers, depot_coords, custome
         file.write("-1\n")  
         file.write("EOF\n")
 
-# Select the worksheet where you want to append the new row
-worksheet = workbook.active
 for filename in os.listdir(directory_path):
     if filename.endswith(".dat"):  # Adjust the file extension as needed
         file_path = os.path.join(directory_path, filename)
